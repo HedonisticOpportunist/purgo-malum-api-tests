@@ -1,11 +1,8 @@
-# -- FILE: features/steps/different_languages.py
-import logging
+# -- FILE: tests/test_different_languages.py
 from pytest_bdd import scenarios as bdd_scenario, given, then, parsers
-from helpers import phrase_helpers, requests
+from helpers import phrase_helpers, requests_helpers, step_helpers
 from helpers import variables
 
-logger = logging.getLogger(__name__)
-given_text = "No text provided."
 
 bdd_scenario("../features/different_languages.feature")
 
@@ -24,7 +21,9 @@ def select_given_language(language):
     given_text = phrase_helpers.return_text_depending_on_language(language)
 
 
-@given("there is a GET request containing a randomly chosen text")
+@given(
+    "there is a GET request containing a randomly chosen text in a different language"
+)
 def select_random_language():
     # ARRANGE
     global given_text
@@ -41,36 +40,32 @@ def select_random_language():
 def return_expected_status_code(expected_response):
 
     # ACT
-    response = requests.make_a_get_request(
+    response = requests_helpers.make_a_get_request(
         request_url=variables.API_JSON_TEST_ENV_URL + given_text
     )
 
     # ASSERT
-    status_code = requests.return_status_code(response=response)
+    status_code = requests_helpers.return_status_code(response=response)
     expected_response = int(expected_response)
     assert status_code == expected_response
 
-    response_body = requests.return_json_body(response=response)
+    response_body = requests_helpers.return_json_body(response=response)
     response_body_text = response_body["result"]
     assert response_body_text == given_text
-   
+
+
 @then(
-    parsers.parse(
-        "a 200 response should be returned that matches the original text"
-    ),
+    parsers.parse("a 200 response should be returned that matches the original text"),
     target_fixture="return_expected_status_code",
-) 
-def return_200_response():
+)
+def verify_the_return_status_code():
     # ACT
-    response = requests.make_a_get_request(
+    response = requests_helpers.make_a_get_request(
         request_url=variables.API_JSON_TEST_ENV_URL + given_text
     )
 
     # ASSERT
-    status_code = requests.return_status_code(response=response)
-    assert status_code == 200
-
-    response_body = requests.return_json_body(response=response)
-    response_body_text = response_body["result"]
-    assert response_body_text == given_text
-    
+    step_helpers.verify_that_status_code_is_a_match(response=response)
+    step_helpers.verify_that_response_matches_the_given_text(
+        response=response, given_text=given_text
+    )

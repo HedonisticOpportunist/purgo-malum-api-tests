@@ -1,12 +1,11 @@
-# -- FILE: features/steps/different_languages.py
-import logging
+# -- FILE: tests/test_too_many_chars.py
 from pytest_bdd import scenarios as bdd_scenario, given, then, parsers
-from helpers import requests
+from helpers import requests_helpers, step_helpers
 from helpers import variables
 import xmltodict
 
-logger = logging.getLogger(__name__)
-given_text = "this is curiously long replacement text"
+
+response = []
 
 bdd_scenario("../features/too_many_chars.feature")
 
@@ -16,27 +15,26 @@ https://automationpanda.com/2020/07/07/arrange-act-assert-a-pattern-for-writing-
 
 # GIVEN STEPS
 @given(
-    parsers.parse("there is a GET request containing some {long_text}"),
-    target_fixture="select_given_language",
+    parsers.parse("there is a GET request containing some {text}"),
+    target_fixture="set_up_error_response",
 )
-def deal_with_long_text(long_text):
+def set_up_error_response(text):
     # ARRANGE
-    global given_text
-    given_text = long_text
+    global response
+
+    # ACT
+    response = requests_helpers.make_a_get_request(
+        request_url=variables.API_ERROR_PATH + text
+    )
 
 
 @then(
     parsers.parse("a response should be returned that marks it as an error"),
 )
 def return_200_response_with_error():
-    # ACT
-    response = requests.make_a_get_request(
-        request_url=variables.API_JSON_TEST_ENV_URL + given_text
-    )
 
     # ASSERT
-    status_code = requests.return_status_code(response=response)
-    assert status_code == 200
+    step_helpers.verify_that_status_code_is_a_match(response=response)
 
     # Returns not well-formed error
     # dict_data = xmltodict.parse(response.content)

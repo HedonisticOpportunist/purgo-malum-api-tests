@@ -1,61 +1,47 @@
-# -- FILE: features/steps/different_languages.py
-import logging
+# -- FILE: features/steps/test_contains_profanity.py
 from pytest_bdd import scenarios as bdd_scenario, given, then, parsers
-from helpers import requests
+from helpers import requests_helpers
+from helpers import step_helpers
 from helpers import variables
 
-logger = logging.getLogger(__name__)
-given_text = "No text provided."
 
 bdd_scenario("../features/contains_profanity.feature")
 
 """ The tests follow the ARRANGE / ACT / ASSERT PATTERN: 
 https://automationpanda.com/2020/07/07/arrange-act-assert-a-pattern-for-writing-good-tests/ """
 
-provided_text = ""
+response = []
 
 
 # GIVEN STEPS
 @given(
-    parsers.parse("there is a GET request containing some {text}"),
-    target_fixture="deal_with_text",
+    parsers.parse("there is a GET request containing some {text} with profanity"),
+    target_fixture="set_up_response",
 )
-def deal_with_text(text):
-    # ARRANGE
-    global provided_text
-    provided_text = text
-
-
 @given(
-    parsers.parse("there is a GET request containing some {phrase}"),
-    target_fixture="deal_with_foreign_text_containing_insults",
+    parsers.parse("there is a GET request containing {text} in a foreign language"),
+    target_fixture="set_up_response",
 )
-def deal_with_foreign_text_containing_insults(phrase):
+def set_up_response(text):
     # ARRANGE
-    global provided_text
-    provided_text = phrase
+    global response
+
+    # ACT
+    response = requests_helpers.make_a_get_request(
+        request_url=variables.API_CONTAINS_PROFANITY + text
+    )
 
 
 @then(
     parsers.parse(
-        "a 200 JSON response should be returned that flags it as {boolean_value}"),
-        target_fixture="flag_as_profanity",
-    )
-
-def flag_as_profanity(boolean_value):
-
-    # ACT
-    global provided_text
-    response = requests.make_a_get_request(
-        request_url=variables.API_CONTAINS_PROFANITY + provided_text
-    )
+        "a 200 JSON response should be returned along with the expected {boolean_value}"
+    ),
+    target_fixture="determine_whether_text_contains_profanity",
+)
+def determine_whether_text_contains_profanity(boolean_value):
 
     # ASSERT
-    status_code = requests.return_status_code(response=response)
-    assert status_code == 200
-    response_body = requests.return_json_body(response=response)
-
-    if boolean_value == "True":
-        assert response_body == True
-    else:
-        assert response_body == False
+    step_helpers.verify_that_status_code_is_a_match(response=response)
+    step_helpers.verify_that_the_response_contains_the_expected_boolean_value(
+        response=response, boolean_value=boolean_value
+    )

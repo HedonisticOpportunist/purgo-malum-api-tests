@@ -1,9 +1,9 @@
-# -- FILE: /features/different_languages.feature
+# -- FILE: /features/contains_profanity.feature
 Feature: Contains Profanity Outlines
 
-    Scenario Outline: As a user I want a text containing profanity is flagged as such.
-        Given there is a GET request containing some <text>
-        Then a 200 JSON response should be returned that flags it as <boolean_value>
+    Scenario Outline: As a user, I want a text containing profanity to be flagged as insults.
+        Given there is a GET request containing some <text> with profanity
+        Then a 200 JSON response should be returned along with the expected <boolean_value>
         Examples:
             | text                                   | boolean_value |
             | Move bastards, you are in my way.      | True          |
@@ -13,11 +13,11 @@ Feature: Contains Profanity Outlines
             | Goddamnit, I lost my phone again.      | True          |
             | Do not enter this room.                | False         |
 
-    Scenario Outline: Foreign texts should not be flagged as insults.
-        Given there is a GET request containing some <phrase>
-        Then a 200 JSON response should be returned that flags it as <boolean_value>
+    Scenario Outline: As a user, I do not expect foreign texts containing insults to be flagged (as the application focuses on the English language).
+        Given there is a GET request containing some <text> in a foreign language
+        Then a 200 JSON response should be returned along with the expected <boolean_value>
         Examples:
-            | phrase   | boolean_value |
+            | text     | boolean_value |
             | Japanese | False         |
             | Polish   | False         |
             | German   | False         |

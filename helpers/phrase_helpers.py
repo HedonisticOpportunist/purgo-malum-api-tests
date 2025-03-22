@@ -1,4 +1,7 @@
-import random 
+# -- FILE: helpers/phrase_helpers.py
+
+import random
+
 
 def return_text_depending_on_language(language: str):
     selected_language = language.lower()
@@ -12,14 +15,16 @@ def return_text_depending_on_language(language: str):
     if selected_language == "tibetian":
         text_str = "དི་ཉི་ཧོང་གི་ཡི་གེ་རེད།"
     if selected_language == "hindi":
-        text_str="यह एक जापानी पाठ है."
+        text_str = "यह एक जापानी पाठ है."
     else:
-        text_str="No language provided."
+        text_str = "No language provided."
     return text_str
+
 
 def select_random_language():
     languages = ["German", "Tibetian", "French", "Japanese"]
     return random.choice(languages)
+
 
 def select_phrase(selected_phrase: str):
     chosen_phrase = selected_phrase.lower()
@@ -39,5 +44,3 @@ def select_phrase(selected_phrase: str):
     else:
         phrase_str = "No insult provided."
     return phrase_str
-    
-    
