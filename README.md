@@ -26,16 +26,6 @@ If you are unwilling to go through the hassle of using Visual Studio, then go th
 
 2. Integrating automation tools with things like `BrowserStack` is cool. I haven't had much exposure to it, but I like the idea of being able to perform cross-browser using it. Automation tools have become increasingly more sophisticated, and I like that you're no longer limited to `Selenium`. Some interesting developments are happening in [automated video game testing](https://research-portal.uu.nl/ws/portalfiles/portal/233300296/978-3-030-88106-1_5.pdf).
 
-3.
-    {
-      "name": "Anita",
-      "age": "Gasp -- a lady never reveals her age!",
-      "nationality": "Austrian, but I am half Polish and Indian",
-      "hobbies": "Reading, writing, swimming, studying -- yes, actually studying",
-      "favourites": "Buffy, Stephen King, Japanese, programming, Star Trek",
-      "characteristics": "Shy night owl who lives on water and taking walks"
-    }
-
-
+3. Find the [file](https://github.com/HedonisticOpportunist/purgo-malum-api-tests/blob/main/resources/silly.json) here. 
 
 5. Manual testing is challenging because you grow tired and careless when you run the same tests repeatedly: this is where automation becomes useful, as you let a computer perform those more tedious tasks. At the same time, you can focus on more interesting tasks. 
